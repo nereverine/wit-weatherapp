@@ -1,19 +1,33 @@
-import { signUp } from '../auth';
+import { signUp, login } from '../auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { StyledContainer, StyledTextInput } from './components/StyledComponents';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const SignUp = () => {
-    const handleSignUpSubmit = async (formValues: { email: string; password: string }) => {
-        try {
-            const user = await signUp(formValues.email, formValues.password);
-            if (user) {
+    const navigate = useNavigate();
+    const [onLoginPage, setOnLoginPage] = useState<boolean>(true);
 
-                console.log(user)
-                // navigate
+    const handleFormSubmit = async (formValues: { email: string; password: string }) => {
+        if (!onLoginPage) {
+            try {
+                const user = await signUp(formValues.email, formValues.password);
+                if (user) {
+                    navigate('/main')
+                }
+            } catch (error) {
+                console.error("Error signingup:", error);
             }
-        } catch (error) {
-            console.error("Error during sign-up:", error);
+        } else {
+            try {
+                const user = await login(formValues.email, formValues.password);
+                if (user) {
+                    navigate('/dashboard')
+                }
+            } catch (error) {
+                console.error("Error loggingin", error)
+            }
         }
     };
 
@@ -29,21 +43,24 @@ const SignUp = () => {
         },
         validationSchema: signUpValidationSchema,
         onSubmit: (formValues) => {
-            console.log(formValues);
-            handleSignUpSubmit(formValues);
+            handleFormSubmit(formValues);
         },
     });
 
     return (
         <StyledContainer>
-            <h2>Sign Up</h2>
+            <h2>{onLoginPage ? 'Login' : 'Sign Up'}</h2>
             <form onSubmit={formik.handleSubmit}>
-                <StyledTextInput label="Email" name="email" description="Enter an email" value={formik.values.email} onChange={formik.handleChange} required id='emailInput' />
-                <div>
-                    <StyledTextInput label="Password" name="password" value={formik.values.password} onChange={formik.handleChange} required id='passwordInput' />
-
+                <StyledTextInput label="Email" name="email" placeholder='Enter an email' value={formik.values.email} onChange={formik.handleChange} required id='emailInput' />
+                {formik.touched.email && formik.errors.email && (
+                    <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.email}</div>
+                )}
+                <StyledTextInput label="Password" name="password" value={formik.values.password} onChange={formik.handleChange} required id='passwordInput' type='password' />
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <span> {onLoginPage ? 'Dont have an account yet?' : 'Already registered?'} </span>
+                    <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setOnLoginPage(!onLoginPage)}>{onLoginPage ? 'Sign Up' : 'Login'}</span>
                 </div>
-                <button type="submit">Sign Up</button>
+                <button style={{ marginTop: '10px' }} type="submit">{onLoginPage ? 'Login' : 'Sign Up'}</button>
             </form>
         </StyledContainer>
     );

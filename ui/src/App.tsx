@@ -1,22 +1,12 @@
 import './App.css';
-import SignUp from './auth/SignUp';
-import { useAuth } from './auth/useAuth';
+import { useRoutes } from 'react-router-dom';
+import getRoutes from './routes';
 
 function App() {
-  const { user } = useAuth();
+  const routes = getRoutes();
+  const app = useRoutes(routes);
 
-  if (!user) {
-    return (
-      <div>
-        <SignUp />
-      </div>
-    );
-  }
-
-  return (
-    <div>main here</div>
-
-  );
+  return app;
 }
 
 export default App;
