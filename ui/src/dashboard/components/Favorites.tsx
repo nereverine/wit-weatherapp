@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchFavorites } from "../../server/dashboard/favorites";
 import { fetchWeatherInCity } from "../../server/dashboard/weatherCalls";
 import lodash from "lodash";
+import { useNavigate } from "react-router-dom";
 
 export type Favorite = {
     id: number;
@@ -11,6 +12,7 @@ export type Favorite = {
 };
 
 export type Weather = {
+    coordinates?: { lon: number; lat: number };
     description: string;
     icon: string;
     temp: number;
@@ -22,6 +24,8 @@ export type Weather = {
 const Favorites = () => {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
     const [weatherData, setWeatherData] = useState<{ [key: string]: Weather }>({});
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadFavorites = async () => {
@@ -57,10 +61,10 @@ const Favorites = () => {
 
     return (
         <Container>
-            <Grid gutter="md" justify="center" align="center">
+            <Grid gutter="md" justify="center" align="center" style={{ cursor: 'pointer' }}>
                 {favorites.slice(0, 3).map((favorite) => (
                     <Grid.Col span="content" key={favorite.id}>
-                        <Card shadow="sm" withBorder style={{ width: '250px' }}>
+                        <Card shadow="sm" withBorder style={{ width: '250px' }} onClick={() => navigate(`/weather/${favorite.city_name}`)}>
                             <CardSection style={{ padding: '16px', textAlign: 'center' }}>
                                 <Title order={3}>{favorite.city_name}</Title>
                             </CardSection>
