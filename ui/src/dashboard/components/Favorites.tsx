@@ -1,7 +1,7 @@
 import { Card, CardSection, Container, Grid, Text, Title, Image } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { fetchFavorites } from "../../server/dashboard/favorites";
-import { fetchWeatherInCity } from "../../server/dashboard/weatherCalls";
+import { fetchUnit, fetchWeatherInCity } from "../../server/dashboard/weatherCalls";
 import lodash from "lodash";
 import { useNavigate } from "react-router-dom";
 
@@ -33,7 +33,7 @@ const Favorites = () => {
             setFavorites(result);
 
             const weatherPromises = result.slice(0, 3).map(async (favorite: Favorite) => {
-                const weather = await fetchWeatherInCity(favorite.city_name, 'metric');
+                const weather = await fetchWeatherInCity(favorite.city_name, await fetchUnit());
                 return {
                     city: favorite.city_name,
                     weather: {
@@ -86,7 +86,7 @@ const Favorites = () => {
                                     {weatherData[favorite.city_name]?.description}
                                 </Text>
                                 <Text size="sm">
-                                    Temp: {weatherData[favorite.city_name]?.temp}°C
+                                    Temp: {weatherData[favorite.city_name]?.temp}
                                 </Text>
                                 <Text size="sm">
                                     Humidity: {weatherData[favorite.city_name]?.humidity}%

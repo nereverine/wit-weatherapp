@@ -1,5 +1,6 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { supabase } from '../../supabaseClient';
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_KEY as string;
 const API_URL = import.meta.env.VITE_OPENWEATHER_URL as string;
@@ -33,7 +34,7 @@ export const fetchForecastInCoords = async (city: string, unit: 'metric' | 'impe
 
         const rawList = response.data.list;
 
-        const grouped: Record<string, any[]> = {}; // A record where the key is a string (date) and the value is an array of entries
+        const grouped: Record<string, any[]> = {};
 
         rawList.forEach((entry: any) => {
             const dateKey = dayjs(entry.dt_txt).format('YYYY-MM-DD');
@@ -52,4 +53,16 @@ export const fetchForecastInCoords = async (city: string, unit: 'metric' | 'impe
         alert(error);
         throw error;
     }
+};
+
+export const fetchUnit = async () => {
+
+    const { data, error } = await supabase
+        .from("Profiles")
+        .select("temp_unit")
+        .eq("id", (await supabase.auth.getUser()).data.user?.id)
+        .single();
+
+    if (!error && data?.temp_unit)
+        return data.temp_unit;
 };
