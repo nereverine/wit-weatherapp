@@ -21,7 +21,7 @@ const Search = () => {
 
     return (
         <div style={{ display: 'flex' }}>
-            <TextInput value={searchWord} onChange={(e) => {
+            <TextInput placeholder='Search for a city' value={searchWord} onChange={(e) => {
                 setSearchWord(e.currentTarget.value);
                 setError(false)
             }} leftSection={<SearchIcon />} error={error ? 'Please type the name of the city' : null} />

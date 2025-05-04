@@ -14,7 +14,7 @@ const SignUp = () => {
             try {
                 const user = await signUp(formValues.email, formValues.password);
                 if (user) {
-                    navigate('/main')
+                    navigate('/dashboard')
                 }
             } catch (error) {
                 console.error("Error signingup:", error);
@@ -56,6 +56,9 @@ const SignUp = () => {
                     <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.email}</div>
                 )}
                 <StyledTextInput label="Password" name="password" value={formik.values.password} onChange={formik.handleChange} required id='passwordInput' type='password' />
+                {formik.touched.password && formik.errors.password && (
+                    <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.password}</div>
+                )}
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <span> {onLoginPage ? 'Dont have an account yet?' : 'Already registered?'} </span>
                     <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setOnLoginPage(!onLoginPage)}>{onLoginPage ? 'Sign Up' : 'Login'}</span>

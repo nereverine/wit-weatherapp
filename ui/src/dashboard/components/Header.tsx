@@ -1,6 +1,6 @@
 import { AppShell, Button } from "@mantine/core"
 import { logout } from "../../auth";
-import TemperatureToggle from "./TemperatureSwitch";
+import TemperatureSwitch from "./TemperatureSwitch";
 
 const Header = () => {
     return (
@@ -14,7 +14,7 @@ const Header = () => {
             }}
         >
             <div>Weather App</div>
-            <TemperatureToggle />
+            <TemperatureSwitch />
             <Button onClick={logout} style={{ position: 'absolute', right: 16 }}>Logout</Button>
         </AppShell.Header>
 

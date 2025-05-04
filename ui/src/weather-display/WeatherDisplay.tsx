@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, Title, Text, Image } from "@mantine/core";
-import { fetchForecastInCoords, fetchWeatherInCity } from "../server/dashboard/weatherCalls";
+import { fetchForecastInCoords, fetchUnit, fetchWeatherInCity } from "../server/dashboard/weatherCalls";
 import { fetchFavorites } from "../server/dashboard/favorites";
 import { supabase } from "../supabaseClient";
 import { Weather } from "../dashboard/components/Favorites";
@@ -14,12 +14,13 @@ const WeatherDisplay = () => {
     const [weather, setWeather] = useState<Weather | null>(null);
     const [forecast, setForecast] = useState<any>(null);
     const [favorites, setFavorites] = useState<any[]>([]);
+    const [tempUnit, setTempUnit] = useState<"metric" | "imperial">("metric");
     const navigate = useNavigate();
 
     useEffect(() => {
-        const loadWeather = async () => {
+        const loadWeatherAndUnit = async () => {
             if (city) {
-                const weatherData = await fetchWeatherInCity(city, 'metric');
+                const weatherData = await fetchWeatherInCity(city, await fetchUnit());
                 setWeather({
                     description: weatherData.weather[0].description,
                     icon: weatherData.weather[0].icon,
@@ -28,16 +29,22 @@ const WeatherDisplay = () => {
                     tempMax: weatherData.main.temp_max,
                     humidity: weatherData.main.humidity,
                 });
+                const unit = await fetchUnit();
+
+                setTempUnit(unit)
             }
         };
 
-        loadWeather();
+
+        loadWeatherAndUnit();
+
+
     }, [city]);
 
     useEffect(() => {
         const loadForecast = async () => {
             if (city) {
-                const forecastData = await fetchForecastInCoords(city, 'metric');
+                const forecastData = await fetchForecastInCoords(city, tempUnit);
                 setForecast(forecastData);
             }
         };
@@ -145,13 +152,13 @@ const WeatherDisplay = () => {
                         <strong>Description:</strong> {weather.description}
                     </Text>
                     <Text size="sm" style={{ marginBottom: '8px' }}>
-                        <strong>Temperature:</strong> {weather.temp}°C
+                        <strong>Temperature:</strong> {weather.temp}{tempUnit === 'metric' ? '°C' : '°F'}
                     </Text>
                     <Text size="sm" style={{ marginBottom: '8px' }}>
-                        <strong>Min Temperature:</strong> {weather.tempMin}°C
+                        <strong>Min Temperature:</strong> {weather.tempMin}{tempUnit === 'metric' ? '°C' : '°F'}
                     </Text>
                     <Text size="sm" style={{ marginBottom: '8px' }}>
-                        <strong>Max Temperature:</strong> {weather.tempMax}°C
+                        <strong>Max Temperature:</strong> {weather.tempMax}{tempUnit === 'metric' ? '°C' : '°F'}
                     </Text>
                     <Text size="sm">
                         <strong>Humidity:</strong> {weather.humidity}%

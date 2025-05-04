@@ -24,6 +24,7 @@ export type Weather = {
 const Favorites = () => {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
     const [weatherData, setWeatherData] = useState<{ [key: string]: Weather }>({});
+    const [tempUnit, setTempUnit] = useState<"metric" | "imperial">("metric");
 
     const navigate = useNavigate();
 
@@ -54,6 +55,8 @@ const Favorites = () => {
             }, {} as { [key: string]: Weather });
 
             setWeatherData(weatherMap);
+            const tempUnit = await fetchUnit();
+            setTempUnit(tempUnit);
         };
 
         loadFavorites();
@@ -62,39 +65,40 @@ const Favorites = () => {
     return (
         <Container>
             <Grid gutter="md" justify="center" align="center" style={{ cursor: 'pointer' }}>
-                {favorites.slice(0, 3).map((favorite) => (
-                    <Grid.Col span="content" key={favorite.id}>
-                        <Card shadow="sm" withBorder style={{ width: '250px' }} onClick={() => navigate(`/weather/${favorite.city_name}`)}>
-                            <CardSection style={{ padding: '16px', textAlign: 'center' }}>
-                                <Title order={3}>{favorite.city_name}</Title>
-                            </CardSection>
+                {favorites.length ?
+                    favorites.slice(0, 3).map((favorite) => (
+                        <Grid.Col span="content" key={favorite.id}>
+                            <Card shadow="sm" withBorder style={{ width: '250px' }} onClick={() => navigate(`/weather/${favorite.city_name}`)}>
+                                <CardSection style={{ padding: '16px', textAlign: 'center' }}>
+                                    <Title order={3}>{favorite.city_name}</Title>
+                                </CardSection>
 
-                            <CardSection style={{ textAlign: 'center', padding: '16px' }}>
-                                {weatherData[favorite.city_name]?.icon && (
-                                    <Image
-                                        src={`http://openweathermap.org/img/wn/${weatherData[favorite.city_name]?.icon}@2x.png`}
-                                        alt={weatherData[favorite.city_name]?.description}
-                                        width={80}
-                                        height={80}
-                                        fit="contain"
-                                    />
-                                )}
-                            </CardSection>
+                                <CardSection style={{ textAlign: 'center', padding: '16px' }}>
+                                    {weatherData[favorite.city_name]?.icon && (
+                                        <Image
+                                            src={`http://openweathermap.org/img/wn/${weatherData[favorite.city_name]?.icon}@2x.png`}
+                                            alt={weatherData[favorite.city_name]?.description}
+                                            width={80}
+                                            height={80}
+                                            fit="contain"
+                                        />
+                                    )}
+                                </CardSection>
 
-                            <CardSection style={{ padding: '16px' }}>
-                                <Text size="sm" color="dimmed">
-                                    {weatherData[favorite.city_name]?.description}
-                                </Text>
-                                <Text size="sm">
-                                    Temp: {weatherData[favorite.city_name]?.temp}
-                                </Text>
-                                <Text size="sm">
-                                    Humidity: {weatherData[favorite.city_name]?.humidity}%
-                                </Text>
-                            </CardSection>
-                        </Card>
-                    </Grid.Col>
-                ))}
+                                <CardSection style={{ padding: '16px' }}>
+                                    <Text size="sm" color="dimmed">
+                                        {weatherData[favorite.city_name]?.description}
+                                    </Text>
+                                    <Text size="sm">
+                                        Temp: {weatherData[favorite.city_name]?.temp} {tempUnit === 'metric' ? '°C' : '°F'}
+                                    </Text>
+                                    <Text size="sm">
+                                        Humidity: {weatherData[favorite.city_name]?.humidity}%
+                                    </Text>
+                                </CardSection>
+                            </Card>
+                        </Grid.Col>
+                    )) : <div>No Favorites Added</div>}
             </Grid>
         </Container>
     );
