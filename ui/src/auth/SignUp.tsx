@@ -63,7 +63,7 @@ const SignUp = () => {
                     <span> {onLoginPage ? 'Dont have an account yet?' : 'Already registered?'} </span>
                     <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setOnLoginPage(!onLoginPage)}>{onLoginPage ? 'Sign Up' : 'Login'}</span>
                 </div>
-                <button style={{ marginTop: '10px' }} type="submit">{onLoginPage ? 'Login' : 'Sign Up'}</button>
+                <button style={{ marginTop: '10px', color: 'gray' }} type="submit">{onLoginPage ? 'Login' : 'Sign Up'}</button>
             </form>
         </StyledContainer>
     );

@@ -9,6 +9,10 @@ const getRoutes = (): RouteObject[] => {
 
     return [
         {
+            path: '/',
+            element: <Navigate to="/signup" />,
+        },
+        {
             path: '/signup',
             element: <SignUp />,
         },
